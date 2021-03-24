@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import createError from "http-errors";
 import { notFound, errorStack } from "../middlewares/errorHandler.js";
 import categoryRoute from "../routes/categoryRoute.js";
 
@@ -21,8 +22,9 @@ if (process.env.NODE_ENV === "development") {
 //route handler
 app.use("/api/categories", categoryRoute);
 
-//error handler
+//notFound handler
 app.use(notFound);
+//error handler
 app.use(errorStack);
 
 export default app;

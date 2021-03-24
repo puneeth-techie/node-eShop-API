@@ -33,3 +33,5 @@ router.route("/:id").put(updateCategoryById);
 // @desc         Deleting category by ID
 // @access       Public
 router.route("/:id").delete(deleteCategoryById);
+
+export default router;

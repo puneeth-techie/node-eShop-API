@@ -8,7 +8,7 @@ const addCategory = async (req, res, next) => {
   try {
     //Validating the category schema.
     const { error } = validateCategorySchema.validateAsync(req.body);
-    if (error) throw createError.BadRequest(error.details[0].message);
+    if (error) throw createError(400, error.message);
 
     //destructuring the req.body
     const { name, color, icon } = req.body;
@@ -24,7 +24,8 @@ const addCategory = async (req, res, next) => {
     category = await category.save();
     res.status(200).send(category);
   } catch (error) {
-    throw createError(400, error.message);
+    //createError(500, error.message);
+    next(error);
   }
 };
 
@@ -39,7 +40,7 @@ const getAllCategory = async (req, res, next) => {
       res.status(200).send(category);
     }
   } catch (error) {
-    throw createError(500, error.message);
+    next(error);
   }
 };
 
@@ -51,10 +52,10 @@ const getCategoryById = async (req, res, next) => {
     if (category) {
       res.status(200).send(category);
     } else {
-      throw createError.BadRequest("Category with the given ID not found.");
+      throw createError(400, "Category with the given ID not found.");
     }
   } catch (error) {
-    throw createError(500, error.message);
+    next(error);
   }
 };
 
@@ -63,7 +64,7 @@ const getCategoryById = async (req, res, next) => {
 const updateCategoryById = async (req, res, next) => {
   try {
     const { error } = validateCategorySchema.validateAsync(req.body);
-    if (error) throw createError.BadRequest(error.details[0].message);
+    if (error) throw createError(400, error.details[0].message);
     const { name, color, icon } = req.body;
     const category = await Category.findByIdAndUpdate(
       req.params.id,
@@ -80,7 +81,7 @@ const updateCategoryById = async (req, res, next) => {
       throw createError(400, "The given ID not found.");
     }
   } catch (error) {
-    throw createError(500, "error.message");
+    next(error);
   }
 };
 
@@ -97,7 +98,7 @@ const deleteCategoryById = async (req, res, next) => {
       throw createError(400, "The category with the given ID not found.");
     }
   } catch (error) {
-    throw createError(500, error.message);
+    next(error);
   }
 };
 
