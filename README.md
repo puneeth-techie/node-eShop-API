@@ -24,6 +24,7 @@
 5. [Morgan](https://www.npmjs.com/package/morgan).
 6. [Nodemon](https://www.npmjs.com/package/nodemon).
 7. [Cors](https://www.npmjs.com/package/cors).
+8. [Joi](https://www.npmjs.com/package/joi)
 
 ### ES Modules in Node
 

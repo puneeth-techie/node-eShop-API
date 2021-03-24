@@ -8,9 +8,11 @@ const categorySchema = new mongoose.Schema(
     },
     color: {
       type: String,
+      required: true,
     },
     icon: {
       type: String,
+      required: true,
     },
   },
   { timestamps: now }
