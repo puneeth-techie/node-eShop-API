@@ -1,6 +1,8 @@
 import createError from "http-errors";
 import Category from "../models/categoryModel.js";
 import { validateCategorySchema } from "../utils/validateSchema.js";
+import mongoose from "mongoose";
+import e from "express";
 
 // @route        POST /api/v1/categories
 // @desc         Adding new categories to the DB
@@ -45,14 +47,18 @@ const getAllCategory = async (req, res, next) => {
 };
 
 // @route        GET /api/v1/categories/:id
-// @desc         Fetching category by ID
+// @desc         Fetching category from ID
 const getCategoryById = async (req, res, next) => {
   try {
-    const category = await Category.findById(req.params.id);
-    if (category) {
-      res.status(200).send(category);
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      throw createError.BadRequest("Invalid Category ID");
     } else {
-      throw createError(400, "Category with the given ID not found.");
+      const category = await Category.findById(req.params.id);
+      if (category) {
+        res.status(200).send(category);
+      } else {
+        throw createError(400, "Category with the given ID not found.");
+      }
     }
   } catch (error) {
     next(error);
@@ -60,25 +66,29 @@ const getCategoryById = async (req, res, next) => {
 };
 
 // @route        PUT /api/v1/categories/:id
-// @desc         Updating category by ID
+// @desc         Updating category using ID
 const updateCategoryById = async (req, res, next) => {
   try {
-    const { error } = validateCategorySchema.validateAsync(req.body);
-    if (error) throw createError(400, error.details[0].message);
-    const { name, color, icon } = req.body;
-    const category = await Category.findByIdAndUpdate(
-      req.params.id,
-      {
-        name,
-        color,
-        icon,
-      },
-      { new: true }
-    );
-    if (category) {
-      res.status(200).send(category);
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      throw createError.BadRequest("Invalid Category ID");
     } else {
-      throw createError(400, "The given ID not found.");
+      const { error } = validateCategorySchema.validateAsync(req.body);
+      if (error) throw createError(400, error.details[0].message);
+      const { name, color, icon } = req.body;
+      const category = await Category.findByIdAndUpdate(
+        req.params.id,
+        {
+          name,
+          color,
+          icon,
+        },
+        { new: true }
+      );
+      if (category) {
+        res.status(200).send(category);
+      } else {
+        throw createError(400, "The given ID not found.");
+      }
     }
   } catch (error) {
     next(error);
@@ -89,13 +99,17 @@ const updateCategoryById = async (req, res, next) => {
 // @desc         Deleting category by ID
 const deleteCategoryById = async (req, res, next) => {
   try {
-    const category = await Category.findByIdAndRemove(req.params.id);
-    if (category) {
-      res.status(200).json({
-        Message: "The given ID category deleted.",
-      });
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      throw createError.BadRequest("Invalid Category ID");
     } else {
-      throw createError(400, "The category with the given ID not found.");
+      const category = await Category.findByIdAndRemove(req.params.id);
+      if (category) {
+        res.status(200).json({
+          Message: "The given ID category deleted.",
+        });
+      } else {
+        throw createError(400, "The category with the given ID not found.");
+      }
     }
   } catch (error) {
     next(error);

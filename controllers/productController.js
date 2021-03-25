@@ -73,11 +73,17 @@ const getAllProduct = async (req, res, next) => {
 // @desc         Fetching product from ID
 const getProductById = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id).populate("category");
-    if (product) {
-      res.status(200).send(product);
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      throw createError.BadRequest("Invalid Product ID");
     } else {
-      throw createError(400, "product with the given ID not found.");
+      const product = await Product.findById(req.params.id).populate(
+        "category"
+      );
+      if (product) {
+        res.status(200).send(product);
+      } else {
+        throw createError(400, "product with the given ID not found.");
+      }
     }
   } catch (error) {
     next(error);
@@ -88,49 +94,53 @@ const getProductById = async (req, res, next) => {
 // @desc         Updating product using ID
 const updateProductById = async (req, res, next) => {
   try {
-    const { error } = validateProductSchema.validateAsync(req.body);
-    if (error) throw createError.BadRequest(error);
-    const {
-      name,
-      description,
-      richDescription,
-      image,
-      images,
-      brand,
-      price,
-      category,
-      countInStock,
-      rating,
-      numReviews,
-      isFeatured,
-    } = req.body;
-
-    const cat = await Category.findById(category);
-    if (!cat) {
-      throw createError.BadRequest("Invalid category ID.");
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      throw createError.BadRequest("Invalid Product ID");
     } else {
-      const product = await Product.findByIdAndUpdate(
-        req.params.id,
-        {
-          name,
-          description,
-          richDescription,
-          image,
-          images,
-          brand,
-          price,
-          category,
-          countInStock,
-          rating,
-          numReviews,
-          isFeatured,
-        },
-        { new: true }
-      );
-      if (product) {
-        res.status(200).send(product);
+      const { error } = validateProductSchema.validateAsync(req.body);
+      if (error) throw createError.BadRequest(error);
+      const {
+        name,
+        description,
+        richDescription,
+        image,
+        images,
+        brand,
+        price,
+        category,
+        countInStock,
+        rating,
+        numReviews,
+        isFeatured,
+      } = req.body;
+
+      const cat = await Category.findById(category);
+      if (!cat) {
+        throw createError.BadRequest("Invalid category ID.");
       } else {
-        throw createError(400, "The product ID not found.");
+        const product = await Product.findByIdAndUpdate(
+          req.params.id,
+          {
+            name,
+            description,
+            richDescription,
+            image,
+            images,
+            brand,
+            price,
+            category,
+            countInStock,
+            rating,
+            numReviews,
+            isFeatured,
+          },
+          { new: true }
+        );
+        if (product) {
+          res.status(200).send(product);
+        } else {
+          throw createError(400, "The product ID not found.");
+        }
       }
     }
   } catch (error) {
