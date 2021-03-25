@@ -1,9 +1,9 @@
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import createError from "http-errors";
 import { notFound, errorStack } from "../middlewares/errorHandler.js";
 import categoryRoute from "../routes/categoryRoute.js";
+import productRoute from "../routes/productRoute.js";
 
 //configure dotenv
 dotenv.config();
@@ -20,7 +20,8 @@ if (process.env.NODE_ENV === "development") {
 }
 
 //route handler
-app.use("/api/categories", categoryRoute);
+app.use("/api/v1/categories", categoryRoute);
+app.use("/api/v1/products", productRoute);
 
 //notFound handler
 app.use(notFound);
