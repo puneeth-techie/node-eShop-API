@@ -58,10 +58,16 @@ const addProduct = async (req, res, next) => {
 // @desc         Fetching all products lists.
 const getAllProduct = async (req, res, next) => {
   try {
+    //query parameter to get specific categories.
+    //http://localhost:5000/api/v1/products?categories=id1,id2
+    let filter = {};
+    if (req.query.categories) {
+      filter = { category: req.query.categories.split(",") };
+    }
     const count = await Product.countDocuments((count) => count);
     if (!count) throw createError.BadRequest("No more products.");
 
-    const product = await Product.find().populate("category");
+    const product = await Product.find(filter).populate("category");
     if (!product) {
       throw createError(400, "No products found.");
     } else {
