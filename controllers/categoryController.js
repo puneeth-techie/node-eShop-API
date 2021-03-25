@@ -2,7 +2,7 @@ import createError from "http-errors";
 import Category from "../models/categoryModel.js";
 import { validateCategorySchema } from "../utils/validateSchema.js";
 
-// @route        POST /api/categories
+// @route        POST /api/v1/categories
 // @desc         Adding new categories to the DB
 const addCategory = async (req, res, next) => {
   try {
@@ -29,7 +29,7 @@ const addCategory = async (req, res, next) => {
   }
 };
 
-// @route        GET /api/categories
+// @route        GET /api/v1/categories
 // @desc         Fetching all categories lists.
 const getAllCategory = async (req, res, next) => {
   try {
@@ -44,7 +44,7 @@ const getAllCategory = async (req, res, next) => {
   }
 };
 
-// @route        GET /api/categories/:id
+// @route        GET /api/v1/categories/:id
 // @desc         Fetching category by ID
 const getCategoryById = async (req, res, next) => {
   try {
@@ -59,7 +59,7 @@ const getCategoryById = async (req, res, next) => {
   }
 };
 
-// @route        PUT /api/categories/:id
+// @route        PUT /api/v1/categories/:id
 // @desc         Updating category by ID
 const updateCategoryById = async (req, res, next) => {
   try {
@@ -85,7 +85,7 @@ const updateCategoryById = async (req, res, next) => {
   }
 };
 
-// @route        DELETE /api/categories/:id
+// @route        DELETE /api/v1/categories/:id
 // @desc         Deleting category by ID
 const deleteCategoryById = async (req, res, next) => {
   try {
