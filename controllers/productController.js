@@ -96,6 +96,21 @@ const getProductById = async (req, res, next) => {
   }
 };
 
+// @route        GET /api/v1/products/featured
+// @desc         Fetching featured product
+const getFeaturedProduct = async (req, res, next) => {
+  try {
+    const product = await Product.find({ isFeatured: true });
+    if (product) {
+      res.status(200).send(product);
+    } else {
+      throw createError(404, "No Featured Product.");
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @route        PUT /api/v1/products/:id
 // @desc         Updating product using ID
 const updateProductById = async (req, res, next) => {
@@ -180,4 +195,5 @@ export {
   getProductById,
   updateProductById,
   deleteProductById,
+  getFeaturedProduct,
 };

@@ -5,6 +5,7 @@ import {
   getProductById,
   updateProductById,
   deleteProductById,
+  getFeaturedProduct,
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -23,6 +24,11 @@ router.route("/").get(getAllProduct);
 // @desc         Fetching product from ID
 // @access       Public
 router.route("/:id").get(getProductById);
+
+// @route        GET /api/v1/get/products/featured
+// @desc         Fetching featured product
+// @access       Public
+router.route("/get/featured").get(getFeaturedProduct);
 
 // @route        PUT /api/v1/products/:id
 // @desc         Updating product from ID
