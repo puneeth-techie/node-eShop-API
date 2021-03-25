@@ -23,8 +23,8 @@ const addProduct = async (req, res, next) => {
       isFeatured,
     } = req.body;
 
-    const category = await Category.findById(category);
-    if (!category) {
+    const cat = await Category.findById(category);
+    if (!cat) {
       throw createError.BadRequest(
         "No category found. Please add correct category ID."
       );
