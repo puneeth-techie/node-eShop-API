@@ -35,11 +35,16 @@ const addCategory = async (req, res, next) => {
 // @desc         Fetching all categories lists.
 const getAllCategory = async (req, res, next) => {
   try {
+    const count = await Category.countDocuments((count) => count);
+    if (!count) throw createError.BadRequest("No more categories.");
     const category = await Category.find();
     if (!category) {
       throw createError(400, "No categories found.");
     } else {
-      res.status(200).send(category);
+      res.status(200).send({
+        TotalCategory: count,
+        CategoryLists: category,
+      });
     }
   } catch (error) {
     next(error);

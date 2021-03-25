@@ -58,11 +58,17 @@ const addProduct = async (req, res, next) => {
 // @desc         Fetching all products lists.
 const getAllProduct = async (req, res, next) => {
   try {
+    const count = await Product.countDocuments((count) => count);
+    if (!count) throw createError.BadRequest("No more products.");
+
     const product = await Product.find().populate("category");
     if (!product) {
       throw createError(400, "No products found.");
     } else {
-      res.status(200).send(product);
+      res.status(200).send({
+        TotalProducts: count,
+        ProductsLists: product,
+      });
     }
   } catch (error) {
     next(error);
