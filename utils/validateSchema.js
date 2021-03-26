@@ -21,4 +21,19 @@ const validateProductSchema = Joi.object({
   isFeatured: Joi.boolean(),
 });
 
-export { validateCategorySchema, validateProductSchema };
+const validateUserSchema = Joi.object({
+  name: Joi.string().min(5).max(255).required(),
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .required(),
+  password: Joi.string().required(),
+  street: Joi.string(),
+  apartment: Joi.string(),
+  city: Joi.string(),
+  zip: Joi.number(),
+  country: Joi.string(),
+  phone: Joi.number().required(),
+  isAdmin: Joi.boolean(),
+});
+
+export { validateCategorySchema, validateProductSchema, validateUserSchema };
