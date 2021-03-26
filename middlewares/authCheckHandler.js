@@ -7,7 +7,6 @@ const adminProtect = async (req, res, next) => {
     if (req.headers.authorization) {
       const token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.SECRET);
-      console.log(decoded);
       req.user = await User.findById(decoded.id).select("-password");
       if (!req.user.isAdmin) {
         throw createError.BadRequest("Admin access required.");

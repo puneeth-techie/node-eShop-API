@@ -83,4 +83,25 @@ const loginUser = async (req, res, next) => {
   }
 };
 
-export { registerUser, loginUser };
+// @route        GET /api/v1/users/get/count
+// @desc         Total customers count
+const getCustomerCount = async (req, res, next) => {
+  try {
+    const count = await User.find({ isAdmin: false }).countDocuments(
+      (count) => count
+    );
+    const customer = await User.find({ isAdmin: false }).select("name email");
+    if (!count) {
+      throw createError(400, "No customers found.");
+    } else {
+      res.status(200).send({
+        TotalCustomer: count,
+        CustomerLists: customer,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { registerUser, loginUser, getCustomerCount };

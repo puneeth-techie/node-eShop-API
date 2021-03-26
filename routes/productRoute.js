@@ -13,7 +13,7 @@ const router = express.Router();
 
 // @route        POST /api/v1/products
 // @desc         Adding new product to the DB
-// @access       Public
+// @access       admin
 router.route("/").post(adminProtect, addProduct);
 
 // @route        GET /api/v1/products
@@ -33,12 +33,12 @@ router.route("/get/featured").get(getFeaturedProduct);
 
 // @route        PUT /api/v1/products/:id
 // @desc         Updating product from ID
-// @access       Public
+// @access       admin
 router.route("/:id").put(adminProtect, updateProductById);
 
 // @route        DELETE /api/v1/products/:id
 // @desc         Deleting product from ID
-// @access       Public
+// @access       admin
 router.route("/:id").delete(adminProtect, deleteProductById);
 
 export default router;

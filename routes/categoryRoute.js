@@ -12,12 +12,12 @@ const router = express.Router();
 
 // @route        POST /api/categories
 // @desc         Adding new categories to the DB
-// @access       Public
+// @access       admin
 router.route("/").post(adminProtect, addCategory);
 
 // @route        GET /api/categories
 // @desc         Fetching all categories lists.
-// @access       Public
+// @access       public
 router.route("/").get(getAllCategory);
 
 // @route        GET /api/categories/:id
@@ -27,12 +27,12 @@ router.route("/:id").get(getCategoryById);
 
 // @route        PUT /api/categories/:id
 // @desc         Updating category by ID
-// @access       Public
+// @access       admin
 router.route("/:id").put(adminProtect, updateCategoryById);
 
 // @route        DELETE /api/categories/:id
 // @desc         Deleting category by ID
-// @access       Public
+// @access       admin
 router.route("/:id").delete(adminProtect, deleteCategoryById);
 
 export default router;
