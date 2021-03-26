@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser } from "../controllers/userController.js";
+import { registerUser, loginUser } from "../controllers/userController.js";
 
 //init router
 const router = express.Router();
@@ -8,5 +8,10 @@ const router = express.Router();
 // @desc         Registering a new user.
 // @access       Public
 router.route("/register").post(registerUser);
+
+// @route        POST /api/v1/users/login
+// @desc         Login registered user.
+// @access       public
+router.route("/login").post(loginUser);
 
 export default router;
