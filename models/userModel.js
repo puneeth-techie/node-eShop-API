@@ -10,11 +10,10 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
-    minlength: 5,
-    maxlength: 18,
     required: true,
   },
   street: {
@@ -31,7 +30,7 @@ const userSchema = new mongoose.Schema({
   },
   zip: {
     type: Number,
-    default: 000000,
+    default: 0,
   },
   country: {
     type: String,

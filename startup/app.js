@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === "development") {
 //route handler
 app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/products", productRoute);
-app.use("/api/v1/user", userRoute);
+app.use("/api/v1/users", userRoute);
 
 //notFound handler
 app.use(notFound);
