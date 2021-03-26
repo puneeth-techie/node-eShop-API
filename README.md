@@ -26,6 +26,7 @@
 7. [Cors](https://www.npmjs.com/package/cors).
 8. [Joi](https://www.npmjs.com/package/joi).
 9. [BcryptJS](https://www.npmjs.com/package/bcryptjs).
+10. [JsonWebToken](https://www.npmjs.com/package/jsonwebtoken)
 
 ### ES Modules in Node
 
