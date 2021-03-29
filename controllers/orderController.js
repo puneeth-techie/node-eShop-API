@@ -7,68 +7,50 @@ import createError from "http-errors";
 // @desc         Ordering products
 const orderProduct = async (req, res, next) => {
   try {
-    const {
-      orderItems,
-      shippingAddress1,
-      shippingAddress2,
-      city,
-      zip,
-      country,
-      phone,
-      status,
-      totalPrice,
-      user,
-      dateOrdered,
-    } = req.body;
-
     //Getting OrderID's when we post the orders
-    const orderIds = orderItems.map((orderItem) => {
-      let newOrderItem = new OrderItems({
-        quantity: orderItem.quantity,
-        product: orderItem.product,
-      });
-      newOrderItem
-        .save()
-        .then((newItem) => {
-          return newItem._id;
-        })
-        .catch((err) => {
-          throw createError.BadRequest(err);
+    const orderIds = Promise.all(
+      req.body.orderItems.map(async (orderItem) => {
+        let newOrderItem = new OrderItems({
+          quantity: orderItem.quantity,
+          product: orderItem.product,
         });
-    });
+        await newOrderItem.save();
+        return newOrderItem._id;
+      })
+    );
+    const orderIdsArray = await orderIds;
 
     //Taking logging user information to update the order details
-    let user = req.user;
-    user = await User.findById(user.id).select("-password");
-    if (!user) {
+    const userInfo = await User.findById(req.user._id).select("-password");
+    if (!userInfo) {
       throw createError.BadRequest(
         "Invalid User token. Please loging with a valid token"
       );
     } else {
-      const totalPrices = orderIds.map((id) => {
-        OrderItems.findById(id)
-          .populate("product", "price")
-          .then((product) => {
-            return id.product.price * id.quantity;
-          })
-          .catch((err) => {
-            throw createError.BadRequest(err);
-          });
-      });
+      const totalPrices = await Promise.all(
+        orderIdsArray.map(async (id) => {
+          const item = await OrderItems.findById(id).populate(
+            "product",
+            "price"
+          );
+          return item.product.price * item.quantity;
+        })
+      );
+
       const sumPrice = totalPrices.reduce((a, b) => a + b, 0);
 
       const order = new Order({
-        orderItems: orderIds,
-        shippingAddress1: `${user.name}, ${user.apartment}, ${user.street}`,
-        shippingAddress2,
-        city: user.city,
-        zip: user.zip,
-        country: user.country,
-        phone: user.phone,
-        status,
+        orderItems: orderIdsArray,
+        shippingAddress1: `${userInfo.name}, ${userInfo.apartment}, ${userInfo.street}`,
+        shippingAddress2: req.body.shippingAddress2,
+        city: userInfo.city,
+        zip: userInfo.zip,
+        country: userInfo.country,
+        phone: userInfo.phone,
+        status: req.body.status,
         totalPrice: sumPrice,
-        user: user._id,
-        dateOrdered,
+        user: userInfo._id,
+        dateOrdered: req.body.dateOrdered,
       });
       await order.save();
       res.status(200).send(order);

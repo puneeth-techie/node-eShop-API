@@ -13,6 +13,8 @@ const adminProtect = async (req, res, next) => {
       } else {
         next();
       }
+    } else {
+      throw createError.BadRequest("Admin authorization token required.");
     }
   } catch (error) {
     next(error);
@@ -25,11 +27,13 @@ const userProtect = async (req, res, next) => {
       const token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.SECRET);
       req.user = await User.findById(decoded.id).select("-password");
-      if (!req.user.isAdmin) {
+      if (req.user.isAdmin === false) {
         next();
       } else {
-        throw createError.BadRequest("Please login. Invalid token.");
+        throw createError.BadRequest("Please login. Invalid user token.");
       }
+    } else {
+      throw createError.BadRequest("User authorization token required.");
     }
   } catch (error) {
     next(error);
