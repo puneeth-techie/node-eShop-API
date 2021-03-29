@@ -60,4 +60,22 @@ const orderProduct = async (req, res, next) => {
   }
 };
 
-export { orderProduct };
+// @route        GET /api/v1/orders
+// @desc         Ordering products
+const getOrderDetails = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      throw createError.BadRequest(
+        "Invalid user access token. Please login get access token"
+      );
+    } else {
+      const order = await Order.findById(user._id).populate("orderItems");
+      res.status(200).send(order);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { orderProduct, getOrderDetails };
