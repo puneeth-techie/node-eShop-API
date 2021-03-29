@@ -70,7 +70,11 @@ const getOrderDetails = async (req, res, next) => {
         "Invalid user access token. Please login get access token"
       );
     } else {
-      const order = await Order.findById(user._id).populate("orderItems");
+      const order = await Order.find({ user: req.user._id }).populate({
+        path: "orderItems",
+        populate: { path: "product", populate: "category" },
+      });
+
       res.status(200).send(order);
     }
   } catch (error) {
