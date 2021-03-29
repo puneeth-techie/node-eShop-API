@@ -82,4 +82,26 @@ const getOrderDetails = async (req, res, next) => {
   }
 };
 
-export { orderProduct, getOrderDetails };
+const getAllOrderDetailsForAdmin = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      throw createError.BadRequest(
+        "Invalid admin access token. Admin access needed."
+      );
+    } else {
+      const order = await Order.find()
+        .populate({
+          path: "orderItems",
+          populate: { path: "product", populate: "category" },
+        })
+        .sort({ dateOrdered: -1 });
+
+      res.status(200).send(order);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { orderProduct, getOrderDetails, getAllOrderDetailsForAdmin };
