@@ -19,4 +19,21 @@ const adminProtect = async (req, res, next) => {
   }
 };
 
-export { adminProtect };
+const userProtect = async (req, res, next) => {
+  try {
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.SECRET);
+      req.user = await User.findById(decoded.id).select("-password");
+      if (!req.user.isAdmin) {
+        next();
+      } else {
+        throw createError.BadRequest("Please login. Invalid token.");
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { adminProtect, userProtect };
