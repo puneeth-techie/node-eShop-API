@@ -75,8 +75,11 @@ const getOrderDetails = async (req, res, next) => {
         path: "orderItems",
         populate: { path: "product", populate: "category" },
       });
-
-      res.status(200).send(order);
+      if (!order) {
+        throw createError.BadRequest("No orders found in your cart.");
+      } else {
+        res.status(200).send(order);
+      }
     }
   } catch (error) {
     next(error);
@@ -147,9 +150,48 @@ const updateOrderDetails = async (req, res, next) => {
     next(error);
   }
 };
+
+// @route        DELETE /api/v1/orders/:id
+// @desc         User can now delete their order by ID.
+const deleteOrder = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      throw createError.BadRequest("Invalid User access token. Please login.");
+    } else {
+      if (!mongoose.isValidObjectId(req.params.id)) {
+        throw createError.BadRequest("Invalid Order ID.");
+      } else {
+        await Order.findByIdAndRemove(req.params.id)
+          .then(async (order) => {
+            if (order) {
+              order.orderItems.map(async (orderItem) => {
+                await OrderItems.findByIdAndRemove(orderItem);
+              });
+              res.status(200).send({
+                success: true,
+                message: "Your order has been deleted successfully.",
+              });
+            } else {
+              throw createError.BadRequest(
+                "Order with the given ID not found."
+              );
+            }
+          })
+          .catch((err) => {
+            throw createError.InternalServerError(err);
+          });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   orderProduct,
   getOrderDetails,
   getAllOrderDetailsForAdmin,
   updateOrderDetails,
+  deleteOrder,
 };

@@ -5,6 +5,7 @@ import {
   getOrderDetails,
   getAllOrderDetailsForAdmin,
   updateOrderDetails,
+  deleteOrder,
 } from "../controllers/orderController.js";
 
 //init router
@@ -29,5 +30,10 @@ router.route("/allorders").get(adminProtect, getAllOrderDetailsForAdmin);
 // @desc         Updating the order status.
 // @access       Admin
 router.route("/:id").put(adminProtect, updateOrderDetails);
+
+// @route        DELETE /api/v1/orders/:id
+// @desc         User can now delete their order by ID.
+// @access       User
+router.route("/:id").delete(userProtect, deleteOrder);
 
 export default router;
