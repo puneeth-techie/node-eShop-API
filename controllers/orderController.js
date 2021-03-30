@@ -96,14 +96,21 @@ const getAllOrderDetailsForAdmin = async (req, res, next) => {
         "Invalid admin access token. Admin access needed."
       );
     } else {
+      const orderCount = await Order.countDocuments((count) => count);
       const order = await Order.find()
         .populate({
           path: "orderItems",
           populate: { path: "product", populate: "category" },
         })
         .sort({ dateOrdered: -1 });
-
-      res.status(200).send(order);
+      if (!order) {
+        throw createError.BadRequest("No orders found.");
+      } else {
+        res.status(200).send({
+          TotalOrderCount: orderCount,
+          order: order,
+        });
+      }
     }
   } catch (error) {
     next(error);
@@ -201,7 +208,7 @@ const deleteOrder = async (req, res, next) => {
   }
 };
 
-// @route        GET /api/v1/orders/getSales
+// @route        GET /api/v1/orders/getsales
 // @desc         Fetching total sales.
 const getTotalSales = async (req, res, next) => {
   try {
