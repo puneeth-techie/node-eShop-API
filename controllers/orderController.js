@@ -82,6 +82,8 @@ const getOrderDetails = async (req, res, next) => {
   }
 };
 
+// @route        GET /api/v1/orders/allorders
+// @desc         Fetching all orders details as admin
 const getAllOrderDetailsForAdmin = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
@@ -104,4 +106,36 @@ const getAllOrderDetailsForAdmin = async (req, res, next) => {
   }
 };
 
-export { orderProduct, getOrderDetails, getAllOrderDetailsForAdmin };
+// @route        PUT /api/v1/orders/allorders
+// @desc         Fetching all orders details as admin
+const updateOrderDetails = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      throw createError.BadRequest(
+        "Invalid admin access token. Admin access needed."
+      );
+    } else {
+      const order = await Order.findById(
+        req.params.id,
+        {
+          status: req.body.status,
+        },
+        { new: true }
+      );
+      if (!order) {
+        throw createError.BadRequest("Invalid Order ID.");
+      } else {
+        res.status(200).send(order);
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+export {
+  orderProduct,
+  getOrderDetails,
+  getAllOrderDetailsForAdmin,
+  updateOrderDetails,
+};
