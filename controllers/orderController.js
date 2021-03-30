@@ -2,6 +2,7 @@ import Order from "../models/orderModel.js";
 import OrderItems from "../models/orderItemsModel.js";
 import User from "../models/userModel.js";
 import createError from "http-errors";
+import mongoose from "mongoose";
 
 // @route        POST /api/v1/orders
 // @desc         Ordering products
@@ -116,17 +117,30 @@ const updateOrderDetails = async (req, res, next) => {
         "Invalid admin access token. Admin access needed."
       );
     } else {
-      const order = await Order.findById(
-        req.params.id,
-        {
-          status: req.body.status,
-        },
-        { new: true }
-      );
-      if (!order) {
+      if (!mongoose.isValidObjectId(req.params.id)) {
         throw createError.BadRequest("Invalid Order ID.");
       } else {
-        res.status(200).send(order);
+        let order = await Order.findById(req.params.id);
+        if (!order) {
+          throw createError.BadRequest("Order ID not found. Invalid Order ID.");
+        } else {
+          if (order.status === "shipped") {
+            throw createError.BadRequest("Order has already been shipped.");
+          } else {
+            order = await Order.findByIdAndUpdate(
+              req.params.id,
+              {
+                status: req.body.status,
+              },
+              { new: true }
+            );
+            if (!order) {
+              throw createError.BadRequest("Invalid Order ID.");
+            } else {
+              res.status(200).send(order);
+            }
+          }
+        }
       }
     }
   } catch (error) {
