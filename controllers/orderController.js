@@ -201,10 +201,37 @@ const deleteOrder = async (req, res, next) => {
   }
 };
 
+// @route        GET /api/v1/orders/getSales
+// @desc         Fetching total sales.
+const getTotalSales = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      throw createError.BadRequest(
+        "Invalid access token. Admin access required."
+      );
+    } else {
+      const totalSales = await Order.aggregate([
+        { $group: { _id: null, totalsales: { $sum: "totalPrice" } } },
+      ]);
+      if (!totalSales) {
+        throw createError.BadRequest("Order sales cannot be generated.");
+      } else {
+        res.status(200).send({
+          totalSales: totalSales.pop().totalsales,
+        });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   orderProduct,
   getOrderDetails,
   getAllOrderDetailsForAdmin,
   updateOrderDetails,
   deleteOrder,
+  getTotalSales,
 };
