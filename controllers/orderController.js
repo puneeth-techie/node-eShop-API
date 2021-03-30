@@ -162,25 +162,38 @@ const deleteOrder = async (req, res, next) => {
       if (!mongoose.isValidObjectId(req.params.id)) {
         throw createError.BadRequest("Invalid Order ID.");
       } else {
-        await Order.findByIdAndRemove(req.params.id)
-          .then(async (order) => {
-            if (order) {
-              order.orderItems.map(async (orderItem) => {
-                await OrderItems.findByIdAndRemove(orderItem);
+        const orderInfo = await Order.findById(req.params.id);
+        if (!orderInfo) {
+          throw createError.BadRequest(
+            "You do not have any Order matching with the given Order ID."
+          );
+        } else {
+          if (orderInfo.user === req.user._id) {
+            await Order.findByIdAndRemove(req.params.id)
+              .then(async (order) => {
+                if (order) {
+                  order.orderItems.map(async (orderItem) => {
+                    await OrderItems.findByIdAndRemove(orderItem);
+                  });
+                  res.status(200).send({
+                    success: true,
+                    message: "Your order has been deleted successfully.",
+                  });
+                } else {
+                  throw createError.BadRequest(
+                    "Order with the given ID not found."
+                  );
+                }
+              })
+              .catch((err) => {
+                throw createError.InternalServerError(err);
               });
-              res.status(200).send({
-                success: true,
-                message: "Your order has been deleted successfully.",
-              });
-            } else {
-              throw createError.BadRequest(
-                "Order with the given ID not found."
-              );
-            }
-          })
-          .catch((err) => {
-            throw createError.InternalServerError(err);
-          });
+          } else {
+            throw createError.BadRequest(
+              "You do not have access to delete this order."
+            );
+          }
+        }
       }
     }
   } catch (error) {
