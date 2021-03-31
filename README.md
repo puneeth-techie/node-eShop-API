@@ -1,5 +1,3 @@
-### Project In Progress...
-
 # eShop API
 
 > This is a typical eCommerce API which contains many functionalities such as Products, Orders, Category, Users, OrderItems and many more.
@@ -26,7 +24,8 @@
 7. [Cors](https://www.npmjs.com/package/cors).
 8. [Joi](https://www.npmjs.com/package/joi).
 9. [BcryptJS](https://www.npmjs.com/package/bcryptjs).
-10. [JsonWebToken](https://www.npmjs.com/package/jsonwebtoken)
+10. [JsonWebToken](https://www.npmjs.com/package/jsonwebtoken).
+11. [Multer](https://www.npmjs.com/package/multer)
 
 ### ES Modules in Node
 
