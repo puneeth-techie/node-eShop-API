@@ -3,6 +3,7 @@ import createError from "http-errors";
 import { validateProductSchema } from "../utils/validateSchema.js";
 import Category from "../models/categoryModel.js";
 import mongoose from "mongoose";
+import upload from "../utils/multer.js";
 
 // @route        POST /api/v1/products
 // @desc         Adding new products to the DB
