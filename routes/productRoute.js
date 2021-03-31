@@ -6,8 +6,10 @@ import {
   updateProductById,
   deleteProductById,
   getFeaturedProduct,
+  productImagesUpload,
 } from "../controllers/productController.js";
 import { adminProtect } from "../middlewares/authCheckHandler.js";
+import upload from "../utils/multer.js";
 
 const router = express.Router();
 
@@ -35,6 +37,13 @@ router.route("/get/featured").get(getFeaturedProduct);
 // @desc         Updating product from ID
 // @access       admin
 router.route("/:id").put(adminProtect, updateProductById);
+
+// @route        PUT /api/v1/products/gallery/:id
+// @desc         Updating product images by ID
+// @access       admin
+router
+  .route("/gallery/:id")
+  .put(adminProtect, upload.array("images", 10), productImagesUpload);
 
 // @route        DELETE /api/v1/products/:id
 // @desc         Deleting product from ID

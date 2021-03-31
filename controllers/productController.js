@@ -3,7 +3,6 @@ import createError from "http-errors";
 import { validateProductSchema } from "../utils/validateSchema.js";
 import Category from "../models/categoryModel.js";
 import mongoose from "mongoose";
-import upload from "../utils/multer.js";
 
 // @route        POST /api/v1/products
 // @desc         Adding new products to the DB
@@ -196,6 +195,48 @@ const deleteProductById = async (req, res, next) => {
     next(error);
   }
 };
+
+// @route        PUT /api/v1/products/gallery/:id
+// @desc         Update product images by product ID
+const productImagesUpload = async (req, res, next) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      throw createError.BadRequest("Invalid product ID.");
+    } else {
+      const basedir = `${req.protocol}://${req.get("host")}/public/uploads/`;
+      let gallery = [];
+      const files = req.files;
+      if (files) {
+        files.map((file) => {
+          if (
+            file.mimetype === "image/png" ||
+            file.mimetype === "image/jpg" ||
+            file.mimetype === "image/jpeg"
+          ) {
+            gallery.push(`${basedir}${file.filename}`);
+          } else {
+            throw createError(400, "Please upload png or jpg format only.");
+          }
+        });
+      }
+      const product = await Product.findByIdAndUpdate(
+        req.params.id,
+        {
+          images: gallery,
+        },
+        { new: true }
+      );
+      if (!product) {
+        throw createError.BadRequest("No product found with the given ID.");
+      } else {
+        res.status(200).send(product.images);
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   addProduct,
   getAllProduct,
@@ -203,4 +244,5 @@ export {
   updateProductById,
   deleteProductById,
   getFeaturedProduct,
+  productImagesUpload,
 };
