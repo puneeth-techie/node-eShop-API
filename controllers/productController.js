@@ -11,6 +11,26 @@ const addProduct = async (req, res, next) => {
     const { error } = validateProductSchema.validateAsync(req.body);
     if (error) throw createError.BadRequest(error);
 
+    const basedir = `${req.protocol}://${req.get("host")}/public/uploads/`;
+    let img = "";
+    let gallery = [];
+    const files = req.files;
+    if (files) {
+      files.map((file) => {
+        if (
+          file.mimetype === "image/png" ||
+          file.mimetype === "image/jpg" ||
+          file.mimetype === "image/jpeg"
+        ) {
+          gallery.push(`${basedir}${file.filename}`);
+        } else if (req.file) {
+          image = `${basedir}${req.file.filename}`;
+        } else {
+          throw createError(400, "Please upload png or jpg format only.");
+        }
+      });
+    }
+
     const {
       name,
       description,
@@ -36,8 +56,8 @@ const addProduct = async (req, res, next) => {
         name,
         description,
         richDescription,
-        image,
-        images,
+        image: img,
+        images: gallery,
         brand,
         price,
         category,

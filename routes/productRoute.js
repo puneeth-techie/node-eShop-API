@@ -16,7 +16,7 @@ const router = express.Router();
 // @route        POST /api/v1/products
 // @desc         Adding new product to the DB
 // @access       admin
-router.route("/").post(adminProtect, addProduct);
+router.route("/").post(adminProtect, upload.single("image"), addProduct);
 
 // @route        GET /api/v1/products
 // @desc         Fetching all product lists from the DB
