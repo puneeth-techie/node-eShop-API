@@ -10,27 +10,7 @@ const addProduct = async (req, res, next) => {
   try {
     const { error } = validateProductSchema.validateAsync(req.body);
     if (error) throw createError.BadRequest(error);
-
     const basedir = `${req.protocol}://${req.get("host")}/public/uploads/`;
-    let img = "";
-    let gallery = [];
-    const files = req.files;
-    if (files) {
-      files.map((file) => {
-        if (
-          file.mimetype === "image/png" ||
-          file.mimetype === "image/jpg" ||
-          file.mimetype === "image/jpeg"
-        ) {
-          gallery.push(`${basedir}${file.filename}`);
-        } else if (req.file) {
-          image = `${basedir}${req.file.filename}`;
-        } else {
-          throw createError(400, "Please upload png or jpg format only.");
-        }
-      });
-    }
-
     const {
       name,
       description,
@@ -56,8 +36,8 @@ const addProduct = async (req, res, next) => {
         name,
         description,
         richDescription,
-        image: img,
-        images: gallery,
+        image: `${basedir}${req.file.filename}`,
+        images,
         brand,
         price,
         category,
@@ -229,9 +209,9 @@ const productImagesUpload = async (req, res, next) => {
       if (files) {
         files.map((file) => {
           if (
-            file.mimetype === "image/png" ||
-            file.mimetype === "image/jpg" ||
-            file.mimetype === "image/jpeg"
+            file.mimetype === "images/png" ||
+            file.mimetype === "images/jpg" ||
+            file.mimetype === "images/jpeg"
           ) {
             gallery.push(`${basedir}${file.filename}`);
           } else {
