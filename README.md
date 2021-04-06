@@ -1,6 +1,6 @@
 # eShop API
 
-> This is a typical eCommerce API which contains many functionalities such as Products, Orders, Category, Users, OrderItems and many more.
+> This is a typical eCommerce API that contains many functionalities such as Products, Orders, Categories, Users, OrderItems and many more.
 
 - Real World Backend RESTful API For E-Commerce Platform Ready for Mobile or Web E-Shop Application.
 - Express & Mongoose Middleware.
